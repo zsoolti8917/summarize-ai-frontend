@@ -1,26 +1,68 @@
-import { Button } from "@/components/ui/button";
+import { Link } from "lucide-react";
+import qs from "qs";
+import { flattenAttributes } from "@/lib/utils";
+import { HeroSection } from "@/components/custom/HeroSection";
+import {FeatureSection} from "@/components/custom/FeatureSection";
+import { getStrapiURL } from "@/lib/utils";
+import { getHomePageData } from "@/data/loaders";
+const homePageQuery = qs.stringify({
+ /* populate: {
+    blocks: {
+      populate: {
+        image: {
+          fields: ["url", "alternativeText"],
+        },
+        link: {
+          populate: true
+        },
+        featureSection :{
+          populate: "*"
+        },
+      }
+    }
+  }*/
 
-async function GetHomePageData(path) {
+  populate: {
+    blocks: {
+      populate: {
+        image: {
+          fields: ["url", "alternativeText"],
+        },
+        link: {
+          populate: true,
+        },
+        features: {
+          populate: true,
+        },
+      },
+    },
+  },
+});
 
-  const baseURL = `http://localhost:1337/${path}`;
-  const data = await fetch(baseURL)
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
-    
-    });
-return data;
+function blockRenderer(block) {
+  switch (block.__component) {
+    case "layout.hero-section":
+      return <HeroSection key={block.id} data={block} />;
+    case "layout.feature-section":
+      return <FeatureSection key={block.id} data={block} />;
+    default:
+      return null;
+  }
 }
 
 
-export default async function Home() {
-  const data = await GetHomePageData("api/home-page");
 
-  const { title, description } = data.data.attributes;
+
+export default async function Home() {
+  const data = await getHomePageData();
+  const { title, description } = data;
+  const { blocks } = data;
+  if(!blocks){
+    return <div> No Blocks Found</div>
+  };
   return (
-    <main className="container mx-auto py-6">
-    <h1 className="text-5xl font-bold">{title}</h1>
-    <p className="text-xl mt-4">{description}</p>
+  <main>
+    {blocks.map((block) => blockRenderer(block))}
   </main>
   );
 }
