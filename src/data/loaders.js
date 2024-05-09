@@ -25,6 +25,7 @@ async function fetchData(url) {
 }
 
 export async function getHomePageData() {
+
     const url = new URL(`/api/home-page`, baseUrl);
 
     url.search = qs.stringify({
@@ -58,6 +59,16 @@ export async function getGlobalData() {
             "footer.logoText",
             "footer.socialLink",
           ],
+    });
+    return await fetchData(url.href);
+}
+
+
+
+export async function getGlobalPageMetaData(){
+    const url = new URL(`/api/global`, baseUrl);
+    url.search = qs.stringify({
+        fields: ["title", "description"],
     });
     return await fetchData(url.href);
 }
