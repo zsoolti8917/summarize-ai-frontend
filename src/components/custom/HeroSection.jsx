@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { StrapiImage } from "@/components/custom/StrapiImage";
+import { getUserMeLoader } from "@/data/services/get-user-me-loader";
+
 export function HeroSection({ data }) {
   const { title, description, image, link } = data;
-
+    
   return (
     <header className="relative h-[600px] overflow-hidden">
       <StrapiImage
